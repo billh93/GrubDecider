@@ -1,5 +1,5 @@
-window.onload = function() {
-    //$("#btn").click(function() {
+
+    $("#btn").click(function() {
         let startPos;
         const geoOptions = {
             // Based off milliseconds
@@ -51,5 +51,4 @@ window.onload = function() {
         };
 
         navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
-    //});
-}
+    });

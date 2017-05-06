@@ -1,19 +1,19 @@
 // the game itself
 var game;
 // the spinning wheel
-var wheel; 
+var wheel;
 // can the wheel spin?
 var canSpin;
 // slices (prizes) placed in the wheel
-var slices = 8;
+var slices = 20;
 // prize names, starting from 12 o'clock going clockwise
-var slicePrizes = ["A KEY!!!", "50 STARS", "500 STARS", "BAD LUCK!!!", "200 STARS", "100 STARS", "150 STARS", "BAD LUCK!!!"];
+let slicePrizes = []; //= ["A KEY!!!", "50 STARS", "500 STARS", "BAD LUCK!!!", "200 STARS", "100 STARS", "150 STARS", "BAD LUCK!!!"];
 // the prize you are about to win
 var prize;
 // text field where to show the prize
 var prizeText;
 
-window.onload = function() {	
+window.onload = function() {
      // creation of a 458x488 game
 	game = new Phaser.Game(458, 488, Phaser.AUTO, "");
      // adding "PlayGame" state
@@ -23,7 +23,6 @@ window.onload = function() {
 }
 
 // PLAYGAME STATE
-	
 var playGame = function(game){};
 
 playGame.prototype = {
@@ -31,7 +30,7 @@ playGame.prototype = {
      preload: function(){
           // preloading graphic assets
           game.load.image("wheel", "wheel.png");
-		game.load.image("pin", "pin.png");     
+		game.load.image("pin", "pin.png");
      },
      // funtion to be executed when the state is created
   	create: function(){
@@ -54,12 +53,12 @@ playGame.prototype = {
           // the game has just started = we can spin the wheel
           canSpin = true;
           // waiting for your input, then calling "spin" function
-          game.input.onDown.add(this.spin, this);		
+          game.input.onDown.add(this.spin, this);
 	},
      // function to spin the wheel
      spin(){
           // can we spin the wheel?
-          if(canSpin){  
+          if(canSpin){
                // resetting text field
                prizeText.text = "";
                // the wheel will spin round from 2 to 4 times. This is just coreography
@@ -87,3 +86,61 @@ playGame.prototype = {
           prizeText.text = slicePrizes[prize];
      }
 }
+
+/********************
+	Places API Call
+********************/
+let startPos;
+const geoOptions = {
+	// Based off milliseconds
+	timeout: 10 * 1000,
+	maximumAge: 5 * 60 * 1000,
+}
+
+let geoSuccess = function(position) {
+	startPos = position;
+	let lat = startPos.coords.latitude;
+	let lon = startPos.coords.longitude;
+	// Radius parameter takes in meters. Radius will be half a mile which equates to about 804 meters
+	const apiLink = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
+	"?location=" + lat + "," + lon + "&radius=804&type=restaurant&key=AIzaSyCyAwrkbjXJiTvhxuxMH_TBptVSr20YkHk"
+	let data = "";
+	$.ajax({
+		type: 'GET',
+		url: apiLink,
+		data: data,
+		async: true,
+		dataType: 'json',
+		success: function(data){
+			let node = document.getElementById('info');
+			let names = data.results.length;
+			//let namesArray = [];
+			for (var i = 0; i < names; ++i) {
+				//console.log(data.results[i].name);
+				slicePrizes.push(data.results[i].name);
+				//node.innerHTML += "<p>" + data.results[i].name + "</p>";
+				console.log(slicePrizes[i]);
+			}
+			/*
+			// Gets url to photo of place
+			let photoReference = data.results[0].photos[0].photo_reference;
+			// Photo api link
+			let photoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=" + photoReference +"&key=AIzaSyCyAwrkbjXJiTvhxuxMH_TBptVSr20YkHk"
+			node.innerHTML = "<p>" + data.results[0].name + "</p>";
+			node.innerHTML += "<img src=" + photoUrl +" />"
+			console.log(data.results);
+			*/
+		}
+	});
+};
+
+let geoError = function(error) {
+console.log('Error occurred. Error code: ' + error.code);
+// error.code can be:
+//   0: unknown error
+//   1: permission denied
+//   2: position unavailable (error response from location provider)
+//   3: timed out
+};
+
+navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
