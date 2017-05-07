@@ -1,3 +1,6 @@
+$(window).load(function() {
+    $(".loader").fadeOut("slow");
+});
 /********************
    Places API Call
 ********************/
@@ -26,7 +29,6 @@ let geoSuccess = function(position) {
         success: function(data) {
             let node = document.getElementById('info');
             let names = data.results.length;
-            //let namesArray = [];
             let colors = [
                 '#eae56f', '#89f26e', '#7de6ef', '#e7706f',
                 '#eae56f', '#89f26e', '#7de6ef', '#e7706f',
@@ -40,19 +42,13 @@ let geoSuccess = function(position) {
                     fillStyle: colors[i],
                     text: data.results[i].name,
                 });
-                //console.log(data.results[i].name);
-                //slicePrizes.push(data.results[i].name);
-                //node.innerHTML += "<p>" + data.results[i].name + "</p>";
             }
-            //console.log(slicePrizes);
             /*
             // Gets url to photo of place
             let photoReference = data.results[0].photos[0].photo_reference;
             // Photo api link
             let photoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=" + photoReference +"&key=AIzaSyCyAwrkbjXJiTvhxuxMH_TBptVSr20YkHk"
-            node.innerHTML = "<p>" + data.results[0].name + "</p>";
             node.innerHTML += "<img src=" + photoUrl +" />"
-            console.log(data.results);
             */
         }
     });
@@ -69,48 +65,34 @@ let geoError = function(error) {
 
 navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 
+/********************
+ Creating The Wheel
+********************/
 setTimeout(
     function() {
-        /********************
-         Creating The Wheel
-        ********************/
         // Create new wheel object specifying the parameters at creation time.
-        var theWheel = new Winwheel({
-            'numSegments': 20, // Specify number of segments.
+        let theWheel = new Winwheel({
+            'numSegments': null, // Specify number of segments.
             'outerRadius': 212, // Set outer radius so wheel fits inside the background.
-            'textFontSize': 28, // Set font size as desired.
-            /*'segments'     :        // Define segments including colour and text.
-            [
-               {'fillStyle' : '#eae56f', 'text' : 'Prize 1'},
-               {'fillStyle' : '#89f26e', 'text' : 'Prize 2'},
-               {'fillStyle' : '#7de6ef', 'text' : 'Prize 3'},
-               {'fillStyle' : '#e7706f', 'text' : 'Prize 4'},
-               {'fillStyle' : '#eae56f', 'text' : 'Prize 5'},
-               {'fillStyle' : '#89f26e', 'text' : 'Prize 6'},
-               {'fillStyle' : '#7de6ef', 'text' : 'Prize 7'},
-               {'fillStyle' : '#e7706f', 'text' : 'Prize 8'}
-           ], */
+            'textFontSize': 12, // Set font size as desired.
             'animation': // Specify the animation to use.
             {
                 'type': 'spinToStop',
                 'duration': 5, // Duration in seconds.
-                'spins': 20, // Number of complete spins.
-                'callbackFinished': 'alertPrize()'
+                'spins': 8, // Number of complete spins.
+                //'callbackFinished': 'alertPrize()'
             }
         });
 
         let segments = [];
         for (var i = 0; i < slicePrizes.length; ++i) {
-            segments.push(slicePrizes[i]);
-            //segments.push(slicePrizes[i]);
-            //console.log(slicePrizes[i]);
+            theWheel.addSegment(slicePrizes[i]); // Define segments including colour and text.
         }
-        console.log(segments);
+        console.log(theWheel.segments);
 
-        theWheel['segments'] = segments;
         // Vars used by the code in this page to do power controls.
-        var wheelPower = 0;
-        var wheelSpinning = false;
+        let wheelPower = 0;
+        let wheelSpinning = false;
 
         // -------------------------------------------------------
         // Function to handle the onClick on the power buttons.
@@ -194,7 +176,7 @@ setTimeout(
         // -------------------------------------------------------
         function alertPrize() {
             // Get the segment indicated by the pointer on the wheel background which is at 0 degrees.
-            var winningSegment = theWheel.getIndicatedSegment();
+            let winningSegment = theWheel.getIndicatedSegment();
 
             // Do basic alert of the segment text. You would probably want to do something more interesting with this information.
             alert("You have won " + winningSegment.text);
