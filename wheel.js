@@ -1,6 +1,3 @@
-$(window).load(function() {
-    $(".loader").fadeOut("slow");
-});
 /********************
    Places API Call
 ********************/
@@ -65,13 +62,10 @@ let geoError = function(error) {
 
 navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
 
-/********************
- Creating The Wheel
-********************/
 setTimeout(
     function() {
         // Create new wheel object specifying the parameters at creation time.
-        let theWheel = new Winwheel({
+        var theWheel = new Winwheel({
             'numSegments': null, // Specify number of segments.
             'outerRadius': 212, // Set outer radius so wheel fits inside the background.
             'textFontSize': 12, // Set font size as desired.
@@ -91,8 +85,8 @@ setTimeout(
         console.log(theWheel.segments);
 
         // Vars used by the code in this page to do power controls.
-        let wheelPower = 0;
-        let wheelSpinning = false;
+        var wheelPower = 0;
+        var wheelSpinning = false;
 
         // -------------------------------------------------------
         // Function to handle the onClick on the power buttons.
@@ -104,22 +98,6 @@ setTimeout(
                 document.getElementById('pw1').className = "";
                 document.getElementById('pw2').className = "";
                 document.getElementById('pw3').className = "";
-
-                // Now light up all cells below-and-including the one selected by changing the class.
-                if (powerLevel >= 1) {
-                    document.getElementById('pw1').className = "pw1";
-                }
-
-                if (powerLevel >= 2) {
-                    document.getElementById('pw2').className = "pw2";
-                }
-
-                if (powerLevel >= 3) {
-                    document.getElementById('pw3').className = "pw3";
-                }
-
-                // Set wheelPower var used when spin button is clicked.
-                wheelPower = powerLevel;
 
                 // Light up the spin button by changing it's source image and adding a clickable class to it.
                 document.getElementById('spin_button').src = "spin_on.png";
@@ -133,16 +111,6 @@ setTimeout(
         function startSpin() {
             // Ensure that spinning can't be clicked again while already running.
             if (wheelSpinning == false) {
-                // Based on the power level selected adjust the number of spins for the wheel, the more times is has
-                // to rotate with the duration of the animation the quicker the wheel spins.
-                if (wheelPower == 1) {
-                    theWheel.animation.spins = 3;
-                } else if (wheelPower == 2) {
-                    theWheel.animation.spins = 8;
-                } else if (wheelPower == 3) {
-                    theWheel.animation.spins = 15;
-                }
-
                 // Disable the spin button so can't click again while wheel is spinning.
                 document.getElementById('spin_button').src = "spin_off.png";
                 document.getElementById('spin_button').className = "";
@@ -164,9 +132,6 @@ setTimeout(
             theWheel.rotationAngle = 0; // Re-set the wheel angle to 0 degrees.
             theWheel.draw(); // Call draw to render changes to the wheel.
 
-            document.getElementById('pw1').className = ""; // Remove all colours from the power level indicators.
-            document.getElementById('pw2').className = "";
-            document.getElementById('pw3').className = "";
 
             wheelSpinning = false; // Reset to false to power buttons and spin can be clicked again.
         }
@@ -176,23 +141,11 @@ setTimeout(
         // -------------------------------------------------------
         function alertPrize() {
             // Get the segment indicated by the pointer on the wheel background which is at 0 degrees.
-            let winningSegment = theWheel.getIndicatedSegment();
+            var winningSegment = theWheel.getIndicatedSegment();
 
             // Do basic alert of the segment text. You would probably want to do something more interesting with this information.
             alert("You have won " + winningSegment.text);
         }
-
-        $("#pw3").click(function() {
-            powerSelected(3);
-        });
-
-        $("#pw2").click(function() {
-            powerSelected(2);
-        });
-
-        $("#pw1").click(function() {
-            powerSelected(1);
-        });
 
         $("#spin_button").click(function() {
             startSpin();
