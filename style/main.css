@@ -1,0 +1,41 @@
+/* CSS reset on selected elements */
+body{
+    background-color: #009688;
+    color: white;
+}
+
+.center-text{
+    text-align: center;
+}
+
+.center-element{
+    margin: 0 auto;
+    display: block;
+}
+
+.ln-border{
+    border: 1px solid black;
+}
+
+/* Sets the background image for the wheel */
+td.the_wheel{
+    background-image: url(../img/wheel_back.png);
+    background-position: center;
+    background-repeat: none;
+}
+
+#reset{
+    width: 100px;
+    height: 50px;
+    background-color: green;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#spin_button{
+    width: 100px;
+    height: 50px;
+    background-color: yellow;
+    font-size: 2em;
+    font-weight: bold;
+}

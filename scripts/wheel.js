@@ -1,10 +1,3 @@
-// First thing: Show user you're getting location to display locations
-// Second thing: Users can't do anything until locations have loaded
-// Third thing: User spins wheel and then lands on location
-// Fourth thing: Write location somewhere new on the page
-
-// Prompt user for location
-
 /********************
    Places API Call
 ********************/
@@ -13,36 +6,40 @@ let startPos;
 let lat;
 let lon;
 let apiLink = "";
-let output = document.getElementById("status");
 const geoOptions = {
     // Based off milliseconds
     timeout: 10 * 1000,
     maximumAge: 5 * 60 * 1000,
 }
+let msgs = [
+    "Hold On, Getting Your location...",
+    "We Need Your Location To Find Places!",
+    "Here You Go!",
+    "Sorry, a glitch happened. Please refresh browser."
+];
 
 let geoSuccess = function(position) {
+    let data = "";
     startPos = position;
     lat = startPos.coords.latitude;
     lon = startPos.coords.longitude;
-    output.innerHTML = "Here You Go!";
+    // Displays 'Here You Go!'
+    $("#status").html(msgs[2]);
+    // Radius parameter takes in meters. Radius will be half a mile which equates to about 804 meters
     apiLink = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
     "?location=" + lat + "," + lon + "&radius=804&type=restaurant&key=AIzaSyCyAwrkbjXJiTvhxuxMH_TBptVSr20YkHk";
-    // Radius parameter takes in meters. Radius will be half a mile which equates to about 804 meters
-    let data = "";
     $.ajax({
         type: 'GET',
         url: apiLink,
         timeout: 10 * 1000,
         error: function(nunya,errStatus,errThrown){
             if(errStatus== "error" || "abort" || "timeout" || "parsererror"){
-                output.innerHTML = "Sorry, a glitch happened. Please refresh browser. <br>";
-                output.innerHTML += "If bug keeps happening please contact owner.";
+                $("#status").html(msgs[3]);
             }
         },
         data: data,
         dataType: 'json',
         success: function(data) {
-            let node = document.getElementById('info');
             let names = data.results.length;
             let colors = [
                 '#eae56f', '#89f26e', '#7de6ef', '#e7706f',
@@ -74,46 +71,25 @@ let geoSuccess = function(position) {
                 {
                     'type': 'spinToStop',
                     'duration': 5, // Duration in seconds.
-                    'spins': 8, // Number of complete spins.
-                    //'callbackFinished': 'alertPrize()'
+                    'spins': 8 // Number of complete spins.
                 }
             });
 
             for (var i = 0; i < slicePrizes.length; ++i) {
+                // Adds name of places to wheel
                 theWheel.addSegment(slicePrizes[i]); // Define segments including colour and text.
             }
+            // Loads places and segments to wheel
             theWheel.draw();
             // Vars used by the code in this page to do power controls.
             var wheelPower = 0;
             var wheelSpinning = false;
-
-            // -------------------------------------------------------
-            // Function to handle the onClick on the power buttons.
-            // -------------------------------------------------------
-            function powerSelected(powerLevel) {
-                // Ensure that power can't be changed while wheel is spinning.
-                if (wheelSpinning == false) {
-                    // Reset all to grey incase this is not the first time the user has selected the power.
-                    document.getElementById('pw1').className = "";
-                    document.getElementById('pw2').className = "";
-                    document.getElementById('pw3').className = "";
-
-                    // Light up the spin button by changing it's source image and adding a clickable class to it.
-                    document.getElementById('spin_button').src = "spin_on.png";
-                    document.getElementById('spin_button').className = "clickable";
-                }
-            }
-
             // -------------------------------------------------------
             // Click handler for spin button.
             // -------------------------------------------------------
             function startSpin() {
                 // Ensure that spinning can't be clicked again while already running.
                 if (wheelSpinning == false) {
-                    // Disable the spin button so can't click again while wheel is spinning.
-                    document.getElementById('spin_button').src = "spin_off.png";
-                    document.getElementById('spin_button').className = "";
-
                     // Begin the spin animation by calling startAnimation on the wheel object.
                     theWheel.startAnimation();
 
@@ -133,17 +109,6 @@ let geoSuccess = function(position) {
                 wheelSpinning = false; // Reset to false to power buttons and spin can be clicked again.
             }
 
-            // -------------------------------------------------------
-            // Called when the spin animation has finished by the callback feature of the wheel because I specified callback in the parameters.
-            // -------------------------------------------------------
-            function alertPrize() {
-                // Get the segment indicated by the pointer on the wheel background which is at 0 degrees.
-                var winningSegment = theWheel.getIndicatedSegment();
-
-                // Do basic alert of the segment text. You would probably want to do something more interesting with this information.
-                alert("You have won " + winningSegment.text);
-            }
-
             $("#spin_button").click(function() {
                 startSpin();
             });
@@ -157,6 +122,8 @@ let geoSuccess = function(position) {
 
 let geoError = function(error) {
     console.log('Error occurred. Error code: ' + error.code);
+    // Displays 'We Need Your Location To Find Places!'
+    $("#status").html(msgs[1]);
     // error.code can be:
     //   0: unknown error
     //   1: permission denied
@@ -164,6 +131,6 @@ let geoError = function(error) {
     //   3: timed out
 };
 
-output.innerHTML = "Hold On, Getting Your location...";
+$("#status").html(msgs[0]);
 
 navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
