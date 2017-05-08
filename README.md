@@ -1,4 +1,4 @@
-## GrubDecider
+## GrubSpin
 A web based wheel of fortune application that helps users determine what they should eat near their location.
 
 ## Author
