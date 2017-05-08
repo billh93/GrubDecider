@@ -1,6 +1,12 @@
 ## GrubDecider
 A web based wheel of fortune application that helps users determine what they should eat near their location.
 
+## Known Problem
+If you are on chrome nothing will load and you will get an error.
+1. Please install Allow-Control-Allow-Origin: * plugin
+2. Turn it on
+3. Everything should work
+
 ## Getting Started
 1. Download/clone repository
 2. Open index.html in your text editor
