@@ -28,9 +28,14 @@ let geoSuccess = function(position) {
     // Radius parameter takes in meters. Radius will be half a mile which equates to about 804 meters
     apiLink = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
     "?location=" + lat + "," + lon + "&radius=804&type=restaurant&key=AIzaSyCyAwrkbjXJiTvhxuxMH_TBptVSr20YkHk";
+
+    // However to make it work, we are going to use the cors-anywhere free service to bypass this
+    var proxy = 'https://cors-anywhere.herokuapp.com/';
+
+    var myUrl = proxy + apiLink;
     $.ajax({
         type: 'GET',
-        url: apiLink,
+        url: myUrl,
         timeout: 10 * 1000,
         error: function(nunya,errStatus,errThrown){
             if(errStatus== "error" || "abort" || "timeout" || "parsererror"){
